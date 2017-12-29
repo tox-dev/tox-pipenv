@@ -1,6 +1,11 @@
 Release notes
 =============
 
+1.1.0 (2017-12-30)
+------------------
+
+* Use Pipenv install --dev as the default installation command
+
 1.0.0 (2017-12-22)
 ------------------
 

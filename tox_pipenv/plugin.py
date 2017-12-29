@@ -42,7 +42,7 @@ def tox_testenv_install_deps(venv, action):
         os.environ['PIPENV_IGNORE_VIRTUALENVS'] = '1'
         os.environ['PIPENV_PIPFILE'] = os.path.join(venv.path, 'Pipfile')
         # action.setactivity("installdeps", "%s" % depinfo)
-        args = [sys.executable, '-m', 'pipenv', 'install'] + list(map(str, deps))
+        args = [sys.executable, '-m', 'pipenv', 'install', '--dev'] + list(map(str, deps))
 
         basepath = venv.path.dirpath()
         basepath.ensure(dir=1)

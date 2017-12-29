@@ -39,3 +39,12 @@ Executing tests
 ---------------
 
 Each of the commands in your testenv configuration will be passed to pipenv to execute within the pipenv virtual environment
+
+
+TODO
+----
+
+This plugin needs work, namely: 
+
+* Tox always calls `pip freeze` to show versions, this is not yet pluggable
+* The use of environment variables is a bit dangerous, move the code to calling the project class functions directly.
