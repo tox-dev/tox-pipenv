@@ -10,8 +10,10 @@ _version = tox_pipenv.__version__
 
 requirements = [
     'tox==2.9.1',
-    'pipenv==9.0.1'
+    'pipenv==9.0.1',
+    'pytest'
 ]
+
 
 def main():
     setup(
@@ -39,6 +41,7 @@ def main():
         install_requires=[requirements],
         entry_points={'tox': ['pipenv = tox_pipenv.plugin']},
     )
+
 
 if __name__ == '__main__':
     main()
