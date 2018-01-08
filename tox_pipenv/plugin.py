@@ -13,6 +13,9 @@ def _init_pipenv_environ():
     # Answer yes on recreation of virtual env
     os.environ['PIPENV_YES'] = '1'
 
+    # don't use pew
+    os.environ['PIPENV_VENV_IN_PROJECT'] = '1'
+
 @hookimpl
 def tox_testenv_create(venv, action):
     _init_pipenv_environ()
@@ -31,11 +34,11 @@ def tox_testenv_create(venv, action):
 
     os.environ['PIPENV_PIPFILE'] = pipfile_path
     os.environ['PIPENV_VIRTUALENV'] = os.path.join(venv.path)
+    os.environ['VIRTUAL_ENV'] = os.path.join(venv.path)
 
     with open(pipfile_path, 'a'):
         os.utime(pipfile_path, None)
 
-    # args.append(venv.path.basename)
     venv._pcall(args, venv=False, action=action, cwd=basepath)
     # Return non-None to indicate the plugin has completed
     return True
