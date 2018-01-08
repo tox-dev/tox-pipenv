@@ -1,6 +1,11 @@
 Release notes
 =============
 
+1.2.1 (2018-01-08)
+------------------
+
+* Added documentation and fixed pypi build
+
 1.2.0 (2018-01-08)
 ------------------
 
