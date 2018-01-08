@@ -1,6 +1,13 @@
 Release notes
 =============
 
+1.2.0 (2018-01-08)
+------------------
+
+* Virtual environments are now correctly stored in .tox/<pyver>/.venv
+* Packages will be reported by pipenv graph after installation. Pip freeze is still being run, downstream PR raised in tox
+* Plugin should not accidentally remove host virtualenv binaries
+
 1.1.0 (2017-12-30)
 ------------------
 

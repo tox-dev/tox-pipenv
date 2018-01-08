@@ -5,13 +5,15 @@ import tox_pipenv
 with open('README.rst') as readme:
     long_description = readme.read()
 
+with open('HISTORY.rst') as history:
+    history_txt = history.read()
+
 
 _version = tox_pipenv.__version__
 
 requirements = [
     'tox==2.9.1',
     'pipenv==9.0.1',
-    'pytest'
 ]
 
 
@@ -19,7 +21,7 @@ def main():
     setup(
         name='tox-pipenv',
         description='A pipenv plugin for tox',
-        long_description=long_description,
+        long_description=long_description + '\n\n' + history_txt,
         version=_version,
         url='https://github.com/tonybaloney/tox-pipenv',
         license='MIT',

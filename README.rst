@@ -52,6 +52,8 @@ Installing requirements
 The installation of requirements from your tox config will be passed to pipenv install for installation into the virtual 
 environment. This replaces the use of pip within tox.
 
+``requirements.txt`` files will also be parsed by Pipenv and used for each test environment
+
 Executing tests
 ---------------
 
@@ -64,4 +66,3 @@ TODO
 This plugin needs work, namely: 
 
 * Tox always calls `pip freeze` to show versions, this is not yet pluggable
-* The use of environment variables is a bit dangerous, move the code to calling the project class functions directly.
