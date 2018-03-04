@@ -1,6 +1,12 @@
 Release notes
 =============
 
+1.3.0 (2018-03-03)
+------------------
+
+* Bugfix : fixed issue when Pathlib.Path occured instead of string
+* Update : updated pipenv to 11.0.1
+
 1.2.1 (2018-01-08)
 ------------------
 

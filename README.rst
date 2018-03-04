@@ -66,3 +66,9 @@ TODO
 This plugin needs work, namely: 
 
 * Tox always calls `pip freeze` to show versions, this is not yet pluggable
+
+Authors
+-------
+
+* Anthony Shaw
+* Omer Katz
