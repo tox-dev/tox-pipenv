@@ -16,6 +16,7 @@ def _init_pipenv_environ():
     # don't use pew
     os.environ['PIPENV_VENV_IN_PROJECT'] = '1'
 
+
 @hookimpl
 def tox_testenv_create(venv, action):
     _init_pipenv_environ()
@@ -56,9 +57,7 @@ def tox_testenv_install_deps(venv, action):
         action.setactivity("installdeps", "%s" % ','.join(list(map(str, deps))))
         args = [sys.executable, '-m', 'pipenv', 'install', '--dev'] + list(map(str, deps))
         venv._pcall(args, venv=False, action=action, cwd=basepath)
-    # call pipenv graph
-    args = [sys.executable, '-m', 'pipenv', 'graph']
-    venv._pcall(args, venv=False, action=action, cwd=basepath)
+
     # Return non-None to indicate the plugin has completed
     return True
 
@@ -109,3 +108,20 @@ def tox_runtest(venv, redirect):
             venv.session.report.error(venv.status)
             raise
     return True
+
+
+@hookimpl
+def tox_runenvreport(venv, action):
+    _init_pipenv_environ()
+    basepath = venv.path.dirpath()
+    basepath.ensure(dir=1)
+    os.environ['PIPENV_PIPFILE'] = os.path.join(venv.path, 'Pipfile')
+    os.environ['PIPENV_VIRTUALENV'] = os.path.join(venv.path)
+
+    action.setactivity("runenvreport", "")
+    # call pipenv graph
+    args = [sys.executable, '-m', 'pipenv', 'graph']
+    output = venv._pcall(args, venv=False, action=action, cwd=basepath)
+
+    output = output.split("\n")
+    return output
