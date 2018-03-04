@@ -19,7 +19,7 @@ def _init_pipenv_environ():
 @hookimpl
 def tox_testenv_create(venv, action):
     _init_pipenv_environ()
-    pipfile_path = os.path.join(venv.path, 'Pipfile')
+    pipfile_path = os.path.join(str(venv.path), 'Pipfile')
 
     config_interpreter = venv.getsupportedinterpreter()
     args = [sys.executable, '-m', 'pipenv']
