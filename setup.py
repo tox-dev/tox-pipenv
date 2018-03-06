@@ -12,7 +12,7 @@ with open('HISTORY.rst') as history:
 _version = tox_pipenv.__version__
 
 requirements = [
-    'tox>=3.0.0rc2',
+    'tox==2.9.1',
     'pipenv==11.0.2',
 ]
 
