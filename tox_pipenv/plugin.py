@@ -20,7 +20,7 @@ def _init_pipenv_environ():
 @hookimpl
 def tox_testenv_create(venv, action):
     _init_pipenv_environ()
-    pipfile_path = os.path.join(str(venv.path), 'Pipfile')
+    pipfile_path = os.path.join(str(venv.session.config.toxinidir), 'Pipfile')
 
     config_interpreter = venv.getsupportedinterpreter()
     args = [sys.executable, '-m', 'pipenv']
@@ -34,8 +34,8 @@ def tox_testenv_create(venv, action):
     basepath.ensure(dir=1)
 
     os.environ['PIPENV_PIPFILE'] = pipfile_path
-    os.environ['PIPENV_VIRTUALENV'] = os.path.join(venv.path)
-    os.environ['VIRTUAL_ENV'] = os.path.join(venv.path)
+    os.environ['PIPENV_VIRTUALENV'] = os.path.join(str(venv.path))
+    os.environ['VIRTUAL_ENV'] = os.path.join(str(venv.path))
 
     with open(pipfile_path, 'a'):
         os.utime(pipfile_path, None)
@@ -51,8 +51,8 @@ def tox_testenv_install_deps(venv, action):
     deps = venv._getresolvedeps()
     basepath = venv.path.dirpath()
     basepath.ensure(dir=1)
-    os.environ['PIPENV_PIPFILE'] = os.path.join(venv.path, 'Pipfile')
-    os.environ['PIPENV_VIRTUALENV'] = os.path.join(venv.path)
+    os.environ['PIPENV_PIPFILE'] = os.path.join(str(venv.session.config.toxinidir), 'Pipfile')
+    os.environ['PIPENV_VIRTUALENV'] = os.path.join(str(venv.path))
     if deps:
         action.setactivity("installdeps", "%s" % ','.join(list(map(str, deps))))
         args = [sys.executable, '-m', 'pipenv', 'install', '--dev'] + list(map(str, deps))
@@ -66,8 +66,8 @@ def tox_testenv_install_deps(venv, action):
 def tox_runtest(venv, redirect):
     _init_pipenv_environ()
     action = venv.session.newaction(venv, "runtests")
-    os.environ['PIPENV_PIPFILE'] = os.path.join(venv.path, 'Pipfile')
-    os.environ['PIPENV_VIRTUALENV'] = os.path.join(venv.path)
+    os.environ['PIPENV_PIPFILE'] = os.path.join(str(venv.session.config.toxinidir), 'Pipfile')
+    os.environ['PIPENV_VIRTUALENV'] = os.path.join(str(venv.path))
 
     action.setactivity("runtests", "PYTHONHASHSEED=%r" % os.environ.get('PYTHONHASHSEED'))
     for i, argv in enumerate(venv.envconfig.commands):
@@ -115,8 +115,8 @@ def tox_runenvreport(venv, action):
     _init_pipenv_environ()
     basepath = venv.path.dirpath()
     basepath.ensure(dir=1)
-    os.environ['PIPENV_PIPFILE'] = os.path.join(venv.path, 'Pipfile')
-    os.environ['PIPENV_VIRTUALENV'] = os.path.join(venv.path)
+    os.environ['PIPENV_PIPFILE'] = os.path.join(str(venv.session.config.toxinidir), 'Pipfile')
+    os.environ['PIPENV_VIRTUALENV'] = os.path.join(str(venv.path))
 
     action.setactivity("runenvreport", "")
     # call pipenv graph
