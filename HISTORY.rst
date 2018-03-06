@@ -1,6 +1,12 @@
 Release notes
 =============
 
+1.4.0 (unreleased)
+------------------
+
+* Now executes "pipenv graph" as part of the tox process to report on environment versions
+* Upgrade to tox 3.0.0rc2
+
 1.3.0 (2018-03-03)
 ------------------
 
