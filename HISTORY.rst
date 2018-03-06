@@ -1,11 +1,13 @@
 Release notes
 =============
 
-1.4.0 (unreleased)
+1.4.0 (2018-03-08)
 ------------------
 
 * Now executes "pipenv graph" as part of the tox process to report on environment versions
 * Upgrade to tox 3.0.0rc2
+* Bugfix : Fixed error "LocalPath object has no attribute endswith"
+* Bugfix : 
 
 1.3.0 (2018-03-03)
 ------------------
