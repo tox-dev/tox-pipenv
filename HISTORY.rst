@@ -1,6 +1,11 @@
 Release notes
 =============
 
+1.4.1 (2018-03-15)
+------------------
+
+* Removed test virtualenv from package, meaning distribution was 18MB, should be 15Kb #38
+
 1.4.0 (2018-03-08)
 ------------------
 
