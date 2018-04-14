@@ -1,7 +1,10 @@
 import sys
 import os
 import tox
-from tox import hookimpl
+
+import pluggy
+
+hookimpl = pluggy.HookimplMarker("tox")
 
 
 def _init_pipenv_environ():
