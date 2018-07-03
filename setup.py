@@ -13,7 +13,7 @@ _version = tox_pipenv.__version__
 
 requirements = [
     'tox==3.0.0',
-    'pipenv==2018.05.18',
+    'pipenv>=2018.05.18',
 ]
 
 
