@@ -4,9 +4,9 @@ Release notes
 1.5.0 (2018-07-03)
 ------------------
 
-* Move to Tox 3.0
-* Tox report now uses pipenv instead of pip freeze
-* Fixed issue on newer versions on pipenv (#41)
+* Update : Update tox to 3.0.0
+* Feature : Tox report now uses pipenv instead of pip freeze
+* Bugfix : Fixed issue on newer versions of pipenv raising error "AttributeError: 'Project' object has no attribute 'pipfile_sources'" (#41)
 
 1.4.1 (2018-03-15)
 ------------------
