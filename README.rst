@@ -4,18 +4,18 @@ tox-pipenv
 .. image:: https://img.shields.io/pypi/v/tox-pipenv.svg
         :target: https://pypi.python.org/pypi/tox-pipenv
 
-.. image:: https://img.shields.io/travis/tonybaloney/tox-pipenv.svg
-        :target: https://travis-ci.org/tonybaloney/tox-pipenv
+.. image:: https://img.shields.io/travis/tox-dev/tox-pipenv.svg
+        :target: https://travis-ci.org/tox-dev/tox-pipenv
 
-.. image:: https://codecov.io/gh/tonybaloney/tox-pipenv/branch/master/graph/badge.svg
-        :target: https://codecov.io/gh/tonybaloney/tox-pipenv
+.. image:: https://codecov.io/gh/tox-dev/tox-pipenv/branch/master/graph/badge.svg
+        :target: https://codecov.io/gh/tox-dev/tox-pipenv
 
-.. image:: https://pyup.io/repos/github/tonybaloney/tox-pipenv/shield.svg
-     :target: https://pyup.io/repos/github/tonybaloney/tox-pipenv/
+.. image:: https://pyup.io/repos/github/tox-dev/tox-pipenv/shield.svg
+     :target: https://pyup.io/repos/github/tox-dev/tox-pipenv/
      :alt: Updates
 
-.. image:: https://pyup.io/repos/github/tonybaloney/tox-pipenv/python-3-shield.svg
-     :target: https://pyup.io/repos/github/tonybaloney/tox-pipenv/
+.. image:: https://pyup.io/repos/github/tox-dev/tox-pipenv/python-3-shield.svg
+     :target: https://pyup.io/repos/github/tox-dev/tox-pipenv/
      :alt: Python 3
 
 A tox plugin to replace the default use of virtualenv with Pipenv.

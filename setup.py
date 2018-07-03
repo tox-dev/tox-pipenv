@@ -23,7 +23,7 @@ def main():
         description='A pipenv plugin for tox',
         long_description=long_description + '\n\n' + history_txt,
         version=_version,
-        url='https://github.com/tonybaloney/tox-pipenv',
+        url='https://github.com/tox-dev/tox-pipenv',
         license='MIT',
         platforms=['unix', 'linux', 'osx', 'cygwin', 'win32'],
         author='Anthony Shaw',
