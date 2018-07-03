@@ -1,6 +1,13 @@
 Release notes
 =============
 
+1.5.0 (2018-07-03)
+------------------
+
+* Move to Tox 3.0
+* Tox report now uses pipenv instead of pip freeze
+* Fixed issue on newer versions on pipenv (#41)
+
 1.4.1 (2018-03-15)
 ------------------
 

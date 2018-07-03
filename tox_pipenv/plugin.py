@@ -110,7 +110,7 @@ def tox_runtest(venv, redirect):
     return True
 
 
-#  @hookimpl use once Tox 3.0 is released
+@hookimpl
 def tox_runenvreport(venv, action):
     _init_pipenv_environ()
     basepath = venv.path.dirpath()
