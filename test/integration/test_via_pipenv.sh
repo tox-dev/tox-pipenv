@@ -1,8 +1,8 @@
 #!/bin/sh
 
 rm -rf env/
-virtualenv env --python=python3.6
+virtualenv env --python=python3.7
 
 pip install -e ../../
 
-pipenv run tox
+pipenv run tox -e py37
