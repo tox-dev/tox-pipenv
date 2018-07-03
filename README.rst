@@ -59,6 +59,36 @@ Executing tests
 
 Each of the commands in your testenv configuration will be passed to pipenv to execute within the pipenv virtual environment
 
+Frequently asked questions
+--------------------------
+
+Where to install
+~~~~~~~~~~~~~~~~
+
+Tox-Pipenv should be installed in the same environment as Tox, whether that is in a virtualenvironment, system environment or user environment. Tox-Pipenv depends on
+Tox 3.0 or newer.
+
+Is user expected to create `Pipfile` and `Pipfile.lock` before executing `tox` with this plugin?
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Yes, although if you are migrating from a requirements.txt to a Pipfile, you can use Pipenv to create the Pipfile for you.
+
+Is `Pipfile.lock` expected to be under source control?
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+According to `pipenv` documenation, `Pipfile.lock` is not recommended under source control if it is going to be used under multiple Python versions.
+
+What is the role of `requirements.txt` file?
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Often, `tox` users use `requirements.txt` which is then referenced from within `tox.ini` file as deps. Pipenv will automatically install any packages listed in 
+`requirements.txt` for each virtual environment that Tox creates.
+
+Is `tox.ini` `deps` section really in control?
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+No, this is a known limitation. 
+
 
 Authors
 -------
