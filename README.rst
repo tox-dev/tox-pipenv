@@ -60,13 +60,6 @@ Executing tests
 Each of the commands in your testenv configuration will be passed to pipenv to execute within the pipenv virtual environment
 
 
-TODO
-----
-
-This plugin needs work, namely: 
-
-* tox always calls `pip freeze` to show versions, this is not yet pluggable
-
 Authors
 -------
 
