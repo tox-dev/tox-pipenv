@@ -1,6 +1,13 @@
 Release notes
 =============
 
+1.6.0 (2018-07-04)
+------------------
+
+* Bugfix : Tox would fail when executed twice if usedevelop was set to True, reported by @ashwinvis #46
+* Bugfix : Any additional dependencies specified in `deps` within tox.ini would be written to the root Pipfile. A temporary Pipfile is created
+    for each virtualenv now, which is a clone of the root Pipfile
+
 1.5.0 (2018-07-03)
 ------------------
 
