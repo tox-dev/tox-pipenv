@@ -42,6 +42,7 @@ def main():
         py_modules=['tox_pipenv'],
         install_requires=[requirements],
         entry_points={'tox': ['pipenv = tox_pipenv.plugin']},
+        tests_require=['pytest','pytest-mock']
     )
 
 
