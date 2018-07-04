@@ -31,10 +31,11 @@ def _clone_pipfile(venv):
         root_pipfile_path.copy(venv_pipfile_path)
     return venv_pipfile_path
 
+
 @hookimpl
 def tox_testenv_create(venv, action):
     _init_pipenv_environ()
-    
+
     config_interpreter = venv.getsupportedinterpreter()
     args = [sys.executable, "-m", "pipenv"]
     if venv.envconfig.sitepackages:
@@ -50,7 +51,7 @@ def tox_testenv_create(venv, action):
     os.environ["PIPENV_PIPFILE"] = str(pipfile_path)
     os.environ["PIPENV_VIRTUALENV"] = os.path.join(str(venv.path))
     os.environ["VIRTUAL_ENV"] = os.path.join(str(venv.path))
-    
+
     venv._pcall(args, venv=False, action=action, cwd=basepath)
     # Return non-None to indicate the plugin has completed
     return True
@@ -74,8 +75,7 @@ def tox_testenv_install_deps(venv, action):
             "-m",
             "pipenv",
             "install",
-            "--dev",
-            "--skip-lock",
+            "--dev"
         ] + list(map(str, deps))
         venv._pcall(args, venv=False, action=action, cwd=basepath)
 
