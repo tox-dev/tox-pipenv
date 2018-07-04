@@ -19,7 +19,10 @@ def _init_pipenv_environ():
 
 def _clone_pipfile(venv):
     root_pipfile_path = venv.session.config.toxinidir.join("Pipfile")
-    venv_pipfile_path = venv.path.dirpath().join("Pipfile")
+    # venv path may not have been created yet
+    venv.path.ensure(dir=1)
+
+    venv_pipfile_path = venv.path.join("Pipfile")
     if not root_pipfile_path.exists():
         with open(str(root_pipfile_path), "a"):
             os.utime(str(root_pipfile_path), None)
