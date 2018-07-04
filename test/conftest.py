@@ -53,7 +53,7 @@ class MockVenv(object):
 class MockAction(object):
     def setactivity(self, *args, **kwargs):
         pass
-    
+
     def popen(self, *args, **kwargs):
         return subprocess.Popen(*args, **kwargs)
 

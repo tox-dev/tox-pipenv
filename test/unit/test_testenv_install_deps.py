@@ -30,7 +30,15 @@ def test_install_special_deps(venv, mocker, actioncls):
     assert result == True
     assert subprocess.Popen.call_count == 1
     subprocess.Popen.assert_called_once_with(
-        [sys.executable, "-m", "pipenv", "install", "--dev", "foo-package", "foo-two-package"],
+        [
+            sys.executable,
+            "-m",
+            "pipenv",
+            "install",
+            "--dev",
+            "foo-package",
+            "foo-two-package",
+        ],
         action=action,
         cwd=venv.path.dirpath(),
         venv=False,

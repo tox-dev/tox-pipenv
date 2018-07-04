@@ -4,6 +4,7 @@ import tox
 from tox import hookimpl
 import contextlib
 
+
 def _init_pipenv_environ():
     os.environ["PIPENV_ACTIVE"] = "1"
 
@@ -31,6 +32,7 @@ def _clone_pipfile(venv):
         root_pipfile_path.copy(venv_pipfile_path)
     return venv_pipfile_path
 
+
 @contextlib.contextmanager
 def wrap_pipenv_environment(venv, pipfile_path):
     old_pipfile = os.environ.get("PIPENV_PIPFILE", None)
@@ -46,6 +48,7 @@ def wrap_pipenv_environment(venv, pipfile_path):
         os.environ["PIPENV_VIRTUALENV"] = old_pipvenv
     if old_venv:
         os.environ["VIRTUAL_ENV"] = old_venv
+
 
 @hookimpl
 def tox_testenv_create(venv, action):

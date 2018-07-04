@@ -23,8 +23,9 @@ deps =
     """,
 )
 
+
 @pytest.mark.xfail(reason="not_implemented")
-@pytest.mark.parametrize('toxconfig', test_configs)
+@pytest.mark.parametrize("toxconfig", test_configs)
 def test_install_special_deps(toxconfig, mocker, actioncls, tmpdir):
     """
     Test that nothing is called when there are no deps
@@ -34,7 +35,7 @@ def test_install_special_deps(toxconfig, mocker, actioncls, tmpdir):
     p.write(toxconfig)
     with tmpdir.as_cwd():
         config = parseconfig([])
-        
+
         for env, envconfig in config.envconfigs.items():
             session = Session(config)
             venv = tox.venv.VirtualEnv(envconfig, session=session)
