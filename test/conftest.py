@@ -33,6 +33,7 @@ class MockVenv(object):
         self.session = MockSession(tmpdir)
         self.envconfig = MockEnvironmentConfig()
         self.envconfig.envdir = tmpdir
+        self.deps = []
 
     @property
     def path(self):
@@ -45,7 +46,20 @@ class MockVenv(object):
     def _pcall(self, *args, **kwargs):
         return subprocess.Popen(*args, **kwargs)
 
+    def _getresolvedeps(self):
+        return self.deps
+
+
+class Action(object):
+    def setactivity(self, *args, **kwargs):
+        pass
+
 
 @pytest.fixture
 def venv(tmpdir):
     return MockVenv(tmpdir)
+
+
+@pytest.fixture
+def actioncls():
+    return Action
