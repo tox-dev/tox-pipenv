@@ -50,9 +50,12 @@ class MockVenv(object):
         return self.deps
 
 
-class Action(object):
+class MockAction(object):
     def setactivity(self, *args, **kwargs):
         pass
+    
+    def popen(self, *args, **kwargs):
+        return subprocess.Popen(*args, **kwargs)
 
 
 @pytest.fixture
@@ -62,4 +65,4 @@ def venv(tmpdir):
 
 @pytest.fixture
 def actioncls():
-    return Action
+    return MockAction
