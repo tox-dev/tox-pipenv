@@ -64,16 +64,17 @@ Example tox.ini
 
 This simple example will test against Python 2.7 and 3.6 using pytest to execute the tests.
 
-```
-[tox]
-envlist = py27, py36
+.. code-block:: 
 
-[testenv]
-deps = 
-  pytest
-  pytest-mock
-commands = python -m pytest test/
-```
+        [tox]
+        envlist = py27, py36
+
+        [testenv]
+        deps = 
+        pytest
+        pytest-mock
+        commands = python -m pytest test/
+
 
 Frequently asked questions
 --------------------------
