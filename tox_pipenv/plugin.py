@@ -70,13 +70,9 @@ def tox_testenv_install_deps(venv, action):
     os.environ["PIPENV_VIRTUALENV"] = os.path.join(str(venv.path))
     if deps:
         action.setactivity("installdeps", "%s" % ",".join(list(map(str, deps))))
-        args = [
-            sys.executable,
-            "-m",
-            "pipenv",
-            "install",
-            "--dev"
-        ] + list(map(str, deps))
+        args = [sys.executable, "-m", "pipenv", "install", "--dev"] + list(
+            map(str, deps)
+        )
         venv._pcall(args, venv=False, action=action, cwd=basepath)
 
     # Return non-None to indicate the plugin has completed
