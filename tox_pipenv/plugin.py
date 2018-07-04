@@ -5,40 +5,52 @@ from tox import hookimpl
 
 
 def _init_pipenv_environ():
-    os.environ['PIPENV_ACTIVE'] = '1'
+    os.environ["PIPENV_ACTIVE"] = "1"
 
     # Ignore host virtual env
-    os.environ['PIPENV_IGNORE_VIRTUALENVS'] = '1'
+    os.environ["PIPENV_IGNORE_VIRTUALENVS"] = "1"
 
     # Answer yes on recreation of virtual env
-    os.environ['PIPENV_YES'] = '1'
+    os.environ["PIPENV_YES"] = "1"
 
     # don't use pew
-    os.environ['PIPENV_VENV_IN_PROJECT'] = '1'
+    os.environ["PIPENV_VENV_IN_PROJECT"] = "1"
+
+
+def _clone_pipfile(venv):
+    root_pipfile_path = venv.session.config.toxinidir.join("Pipfile")
+    # venv path may not have been created yet
+    venv.path.ensure(dir=1)
+
+    venv_pipfile_path = venv.path.join("Pipfile")
+    if not root_pipfile_path.exists():
+        with open(str(root_pipfile_path), "a"):
+            os.utime(str(root_pipfile_path), None)
+
+    if not venv_pipfile_path.check():
+        root_pipfile_path.copy(venv_pipfile_path)
+    return venv_pipfile_path
 
 
 @hookimpl
 def tox_testenv_create(venv, action):
     _init_pipenv_environ()
-    pipfile_path = os.path.join(str(venv.session.config.toxinidir), 'Pipfile')
 
     config_interpreter = venv.getsupportedinterpreter()
-    args = [sys.executable, '-m', 'pipenv']
+    args = [sys.executable, "-m", "pipenv"]
     if venv.envconfig.sitepackages:
-        args.append('--site-packages')
+        args.append("--site-packages")
 
-    args.extend(['--python', str(config_interpreter)])
+    args.extend(["--python", str(config_interpreter)])
 
     venv.session.make_emptydir(venv.path)
     basepath = venv.path.dirpath()
     basepath.ensure(dir=1)
+    pipfile_path = _clone_pipfile(venv)
 
-    os.environ['PIPENV_PIPFILE'] = pipfile_path
-    os.environ['PIPENV_VIRTUALENV'] = os.path.join(str(venv.path))
-    os.environ['VIRTUAL_ENV'] = os.path.join(str(venv.path))
-
-    with open(pipfile_path, 'a'):
-        os.utime(pipfile_path, None)
+    os.environ["PIPENV_PIPFILE"] = str(pipfile_path)
+    os.environ["PIPENV_VIRTUALENV"] = os.path.join(str(venv.path))
+    os.environ["VIRTUAL_ENV"] = os.path.join(str(venv.path))
 
     venv._pcall(args, venv=False, action=action, cwd=basepath)
     # Return non-None to indicate the plugin has completed
@@ -48,14 +60,19 @@ def tox_testenv_create(venv, action):
 @hookimpl
 def tox_testenv_install_deps(venv, action):
     _init_pipenv_environ()
+    # TODO: If skip_install set, check existence of venv Pipfile
     deps = venv._getresolvedeps()
     basepath = venv.path.dirpath()
     basepath.ensure(dir=1)
-    os.environ['PIPENV_PIPFILE'] = os.path.join(str(venv.session.config.toxinidir), 'Pipfile')
-    os.environ['PIPENV_VIRTUALENV'] = os.path.join(str(venv.path))
+    pipfile_path = _clone_pipfile(venv)
+
+    os.environ["PIPENV_PIPFILE"] = str(pipfile_path)
+    os.environ["PIPENV_VIRTUALENV"] = os.path.join(str(venv.path))
     if deps:
-        action.setactivity("installdeps", "%s" % ','.join(list(map(str, deps))))
-        args = [sys.executable, '-m', 'pipenv', 'install', '--dev'] + list(map(str, deps))
+        action.setactivity("installdeps", "%s" % ",".join(list(map(str, deps))))
+        args = [sys.executable, "-m", "pipenv", "install", "--dev"] + list(
+            map(str, deps)
+        )
         venv._pcall(args, venv=False, action=action, cwd=basepath)
 
     # Return non-None to indicate the plugin has completed
@@ -65,17 +82,20 @@ def tox_testenv_install_deps(venv, action):
 @hookimpl
 def tox_runtest(venv, redirect):
     _init_pipenv_environ()
-    action = venv.session.newaction(venv, "runtests")
-    os.environ['PIPENV_PIPFILE'] = os.path.join(str(venv.session.config.toxinidir), 'Pipfile')
-    os.environ['PIPENV_VIRTUALENV'] = os.path.join(str(venv.path))
+    pipfile_path = _clone_pipfile(venv)
 
-    action.setactivity("runtests", "PYTHONHASHSEED=%r" % os.environ.get('PYTHONHASHSEED'))
+    action = venv.session.newaction(venv, "runtests")
+    os.environ["PIPENV_PIPFILE"] = str(pipfile_path)
+    os.environ["PIPENV_VIRTUALENV"] = os.path.join(str(venv.path))
+
+    action.setactivity(
+        "runtests", "PYTHONHASHSEED=%r" % os.environ.get("PYTHONHASHSEED")
+    )
     for i, argv in enumerate(venv.envconfig.commands):
         # have to make strings as _pcall changes argv[0] to a local()
         # happens if the same environment is invoked twice
         cwd = venv.envconfig.changedir
-        message = "commands[%s] | %s" % (i, ' '.join(
-            [str(x) for x in argv]))
+        message = "commands[%s] | %s" % (i, " ".join([str(x) for x in argv]))
         action.setactivity("runtests", message)
         # check to see if we need to ignore the return code
         # if so, we need to alter the command line arguments
@@ -87,15 +107,23 @@ def tox_runtest(venv, redirect):
                 argv[0] = argv[0].lstrip("-")
         else:
             ignore_ret = False
-        args = [sys.executable, '-m', 'pipenv', 'run'] + argv
+        args = [sys.executable, "-m", "pipenv", "run"] + argv
         try:
-            venv._pcall(args, venv=False, cwd=cwd, action=action, redirect=redirect,
-                        ignore_ret=ignore_ret, testcommand=False)
+            venv._pcall(
+                args,
+                venv=False,
+                cwd=cwd,
+                action=action,
+                redirect=redirect,
+                ignore_ret=ignore_ret,
+                testcommand=False,
+            )
         except tox.exception.InvocationError as err:
             if venv.envconfig.ignore_outcome:
                 venv.session.report.warning(
                     "command failed but result from testenv is ignored\n"
-                    "  cmd: %s" % (str(err),))
+                    "  cmd: %s" % (str(err),)
+                )
                 venv.status = "ignored failed command"
                 continue  # keep processing commands
 
@@ -113,14 +141,16 @@ def tox_runtest(venv, redirect):
 @hookimpl
 def tox_runenvreport(venv, action):
     _init_pipenv_environ()
+    pipfile_path = _clone_pipfile(venv)
+
     basepath = venv.path.dirpath()
     basepath.ensure(dir=1)
-    os.environ['PIPENV_PIPFILE'] = os.path.join(str(venv.session.config.toxinidir), 'Pipfile')
-    os.environ['PIPENV_VIRTUALENV'] = os.path.join(str(venv.path))
+    os.environ["PIPENV_PIPFILE"] = str(pipfile_path)
+    os.environ["PIPENV_VIRTUALENV"] = os.path.join(str(venv.path))
 
     action.setactivity("runenvreport", "")
     # call pipenv graph
-    args = [sys.executable, '-m', 'pipenv', 'graph']
+    args = [sys.executable, "-m", "pipenv", "graph"]
     output = venv._pcall(args, venv=False, action=action, cwd=basepath)
 
     output = output.split("\n")

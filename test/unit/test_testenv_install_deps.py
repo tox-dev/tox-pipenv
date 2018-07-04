@@ -23,14 +23,14 @@ def test_install_special_deps(venv, mocker, actioncls):
     Test that nothing is called when there are no deps
     """
     action = actioncls()
-    venv.deps = ["foo-package"]
+    venv.deps = ["foo-package", "foo-two-package"]
     mocker.patch.object(os, "environ", autospec=True)
     mocker.patch("subprocess.Popen")
     result = tox_testenv_install_deps(venv, action)
     assert result == True
     assert subprocess.Popen.call_count == 1
     subprocess.Popen.assert_called_once_with(
-        [sys.executable, "-m", "pipenv", "install", "--dev", "foo-package"],
+        [sys.executable, "-m", "pipenv", "install", "--dev", "foo-package", "foo-two-package"],
         action=action,
         cwd=venv.path.dirpath(),
         venv=False,
