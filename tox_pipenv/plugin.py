@@ -2,6 +2,7 @@ import sys
 import os
 import tox
 from tox import hookimpl
+import contextlib
 
 
 def _init_pipenv_environ():
@@ -32,6 +33,23 @@ def _clone_pipfile(venv):
     return venv_pipfile_path
 
 
+@contextlib.contextmanager
+def wrap_pipenv_environment(venv, pipfile_path):
+    old_pipfile = os.environ.get("PIPENV_PIPFILE", None)
+    os.environ["PIPENV_PIPFILE"] = str(pipfile_path)
+    old_pipvenv = os.environ.get("PIPENV_VIRTUALENV", None)
+    os.environ["PIPENV_VIRTUALENV"] = os.path.join(str(venv.path))
+    old_venv = os.environ.get("VIRTUAL_ENV", None)
+    os.environ["VIRTUAL_ENV"] = os.path.join(str(venv.path))
+    yield
+    if old_pipfile:
+        os.environ["PIPENV_PIPFILE"] = old_pipfile
+    if old_pipvenv:
+        os.environ["PIPENV_VIRTUALENV"] = old_pipvenv
+    if old_venv:
+        os.environ["VIRTUAL_ENV"] = old_venv
+
+
 @hookimpl
 def tox_testenv_create(venv, action):
     _init_pipenv_environ()
@@ -48,11 +66,9 @@ def tox_testenv_create(venv, action):
     basepath.ensure(dir=1)
     pipfile_path = _clone_pipfile(venv)
 
-    os.environ["PIPENV_PIPFILE"] = str(pipfile_path)
-    os.environ["PIPENV_VIRTUALENV"] = os.path.join(str(venv.path))
-    os.environ["VIRTUAL_ENV"] = os.path.join(str(venv.path))
+    with wrap_pipenv_environment(venv, pipfile_path):
+        venv._pcall(args, venv=False, action=action, cwd=basepath)
 
-    venv._pcall(args, venv=False, action=action, cwd=basepath)
     # Return non-None to indicate the plugin has completed
     return True
 
@@ -66,14 +82,13 @@ def tox_testenv_install_deps(venv, action):
     basepath.ensure(dir=1)
     pipfile_path = _clone_pipfile(venv)
 
-    os.environ["PIPENV_PIPFILE"] = str(pipfile_path)
-    os.environ["PIPENV_VIRTUALENV"] = os.path.join(str(venv.path))
     if deps:
-        action.setactivity("installdeps", "%s" % ",".join(list(map(str, deps))))
-        args = [sys.executable, "-m", "pipenv", "install", "--dev"] + list(
-            map(str, deps)
-        )
-        venv._pcall(args, venv=False, action=action, cwd=basepath)
+        with wrap_pipenv_environment(venv, pipfile_path):
+            action.setactivity("installdeps", "%s" % ",".join(list(map(str, deps))))
+            args = [sys.executable, "-m", "pipenv", "install", "--dev"] + list(
+                map(str, deps)
+            )
+            venv._pcall(args, venv=False, action=action, cwd=basepath)
 
     # Return non-None to indicate the plugin has completed
     return True
@@ -85,56 +100,56 @@ def tox_runtest(venv, redirect):
     pipfile_path = _clone_pipfile(venv)
 
     action = venv.session.newaction(venv, "runtests")
-    os.environ["PIPENV_PIPFILE"] = str(pipfile_path)
-    os.environ["PIPENV_VIRTUALENV"] = os.path.join(str(venv.path))
 
-    action.setactivity(
-        "runtests", "PYTHONHASHSEED=%r" % os.environ.get("PYTHONHASHSEED")
-    )
-    for i, argv in enumerate(venv.envconfig.commands):
-        # have to make strings as _pcall changes argv[0] to a local()
-        # happens if the same environment is invoked twice
-        cwd = venv.envconfig.changedir
-        message = "commands[%s] | %s" % (i, " ".join([str(x) for x in argv]))
-        action.setactivity("runtests", message)
-        # check to see if we need to ignore the return code
-        # if so, we need to alter the command line arguments
-        if argv[0].startswith("-"):
-            ignore_ret = True
-            if argv[0] == "-":
-                del argv[0]
+    with wrap_pipenv_environment(venv, pipfile_path):
+        action.setactivity(
+            "runtests", "PYTHONHASHSEED=%r" % os.environ.get("PYTHONHASHSEED")
+        )
+        for i, argv in enumerate(venv.envconfig.commands):
+            # have to make strings as _pcall changes argv[0] to a local()
+            # happens if the same environment is invoked twice
+            cwd = venv.envconfig.changedir
+            message = "commands[%s] | %s" % (i, " ".join([str(x) for x in argv]))
+            action.setactivity("runtests", message)
+            # check to see if we need to ignore the return code
+            # if so, we need to alter the command line arguments
+            if argv[0].startswith("-"):
+                ignore_ret = True
+                if argv[0] == "-":
+                    del argv[0]
+                else:
+                    argv[0] = argv[0].lstrip("-")
             else:
-                argv[0] = argv[0].lstrip("-")
-        else:
-            ignore_ret = False
-        args = [sys.executable, "-m", "pipenv", "run"] + argv
-        try:
-            venv._pcall(
-                args,
-                venv=False,
-                cwd=cwd,
-                action=action,
-                redirect=redirect,
-                ignore_ret=ignore_ret,
-                testcommand=False,
-            )
-        except tox.exception.InvocationError as err:
-            if venv.envconfig.ignore_outcome:
-                venv.session.report.warning(
-                    "command failed but result from testenv is ignored\n"
-                    "  cmd: %s" % (str(err),)
+                ignore_ret = False
+            args = [sys.executable, "-m", "pipenv", "run"] + argv
+            try:
+                venv._pcall(
+                    args,
+                    venv=False,
+                    cwd=cwd,
+                    action=action,
+                    redirect=redirect,
+                    ignore_ret=ignore_ret,
+                    testcommand=False,
                 )
-                venv.status = "ignored failed command"
-                continue  # keep processing commands
+            except tox.exception.InvocationError as err:
+                if venv.envconfig.ignore_outcome:
+                    venv.session.report.warning(
+                        "command failed but result from testenv is ignored\n"
+                        "  cmd: %s" % (str(err),)
+                    )
+                    venv.status = "ignored failed command"
+                    continue  # keep processing commands
 
-            venv.session.report.error(str(err))
-            venv.status = "commands failed"
-            if not venv.envconfig.ignore_errors:
-                break  # Don't process remaining commands
-        except KeyboardInterrupt:
-            venv.status = "keyboardinterrupt"
-            venv.session.report.error(venv.status)
-            raise
+                venv.session.report.error(str(err))
+                venv.status = "commands failed"
+                if not venv.envconfig.ignore_errors:
+                    break  # Don't process remaining commands
+            except KeyboardInterrupt:
+                venv.status = "keyboardinterrupt"
+                venv.session.report.error(venv.status)
+                raise
+
     return True
 
 
@@ -145,13 +160,11 @@ def tox_runenvreport(venv, action):
 
     basepath = venv.path.dirpath()
     basepath.ensure(dir=1)
-    os.environ["PIPENV_PIPFILE"] = str(pipfile_path)
-    os.environ["PIPENV_VIRTUALENV"] = os.path.join(str(venv.path))
+    with wrap_pipenv_environment(venv, pipfile_path):
+        action.setactivity("runenvreport", "")
+        # call pipenv graph
+        args = [sys.executable, "-m", "pipenv", "graph"]
+        output = venv._pcall(args, venv=False, action=action, cwd=basepath)
 
-    action.setactivity("runenvreport", "")
-    # call pipenv graph
-    args = [sys.executable, "-m", "pipenv", "graph"]
-    output = venv._pcall(args, venv=False, action=action, cwd=basepath)
-
-    output = output.split("\n")
+        output = output.split("\n")
     return output
