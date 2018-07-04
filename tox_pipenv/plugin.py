@@ -17,11 +17,21 @@ def _init_pipenv_environ():
     os.environ["PIPENV_VENV_IN_PROJECT"] = "1"
 
 
+def _clone_pipfile(venv):
+    root_pipfile_path = venv.session.config.toxinidir.join("Pipfile")
+    venv_pipfile_path = venv.path.dirpath().join("Pipfile")
+    if not root_pipfile_path.exists():
+        with open(str(root_pipfile_path), "a"):
+            os.utime(str(root_pipfile_path), None)
+
+    if not venv_pipfile_path.check():
+        root_pipfile_path.copy(venv_pipfile_path)
+    return venv_pipfile_path
+
 @hookimpl
 def tox_testenv_create(venv, action):
     _init_pipenv_environ()
-    pipfile_path = os.path.join(str(venv.session.config.toxinidir), "Pipfile")
-
+    
     config_interpreter = venv.getsupportedinterpreter()
     args = [sys.executable, "-m", "pipenv"]
     if venv.envconfig.sitepackages:
@@ -32,14 +42,12 @@ def tox_testenv_create(venv, action):
     venv.session.make_emptydir(venv.path)
     basepath = venv.path.dirpath()
     basepath.ensure(dir=1)
+    pipfile_path = _clone_pipfile(venv)
 
-    os.environ["PIPENV_PIPFILE"] = pipfile_path
+    os.environ["PIPENV_PIPFILE"] = str(pipfile_path)
     os.environ["PIPENV_VIRTUALENV"] = os.path.join(str(venv.path))
     os.environ["VIRTUAL_ENV"] = os.path.join(str(venv.path))
-
-    with open(pipfile_path, "a"):
-        os.utime(pipfile_path, None)
-
+    
     venv._pcall(args, venv=False, action=action, cwd=basepath)
     # Return non-None to indicate the plugin has completed
     return True
@@ -48,12 +56,13 @@ def tox_testenv_create(venv, action):
 @hookimpl
 def tox_testenv_install_deps(venv, action):
     _init_pipenv_environ()
+    # TODO: If skip_install set, check existence of venv Pipfile
     deps = venv._getresolvedeps()
     basepath = venv.path.dirpath()
     basepath.ensure(dir=1)
-    os.environ["PIPENV_PIPFILE"] = os.path.join(
-        str(venv.session.config.toxinidir), "Pipfile"
-    )
+    pipfile_path = _clone_pipfile(venv)
+
+    os.environ["PIPENV_PIPFILE"] = str(pipfile_path)
     os.environ["PIPENV_VIRTUALENV"] = os.path.join(str(venv.path))
     if deps:
         action.setactivity("installdeps", "%s" % ",".join(list(map(str, deps))))
@@ -74,10 +83,10 @@ def tox_testenv_install_deps(venv, action):
 @hookimpl
 def tox_runtest(venv, redirect):
     _init_pipenv_environ()
+    pipfile_path = _clone_pipfile(venv)
+
     action = venv.session.newaction(venv, "runtests")
-    os.environ["PIPENV_PIPFILE"] = os.path.join(
-        str(venv.session.config.toxinidir), "Pipfile"
-    )
+    os.environ["PIPENV_PIPFILE"] = str(pipfile_path)
     os.environ["PIPENV_VIRTUALENV"] = os.path.join(str(venv.path))
 
     action.setactivity(
@@ -133,11 +142,11 @@ def tox_runtest(venv, redirect):
 @hookimpl
 def tox_runenvreport(venv, action):
     _init_pipenv_environ()
+    pipfile_path = _clone_pipfile(venv)
+
     basepath = venv.path.dirpath()
     basepath.ensure(dir=1)
-    os.environ["PIPENV_PIPFILE"] = os.path.join(
-        str(venv.session.config.toxinidir), "Pipfile"
-    )
+    os.environ["PIPENV_PIPFILE"] = str(pipfile_path)
     os.environ["PIPENV_VIRTUALENV"] = os.path.join(str(venv.path))
 
     action.setactivity("runenvreport", "")
