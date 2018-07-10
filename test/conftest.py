@@ -2,6 +2,8 @@ import pytest
 import py
 import subprocess
 
+from _pytest.tmpdir import tmpdir
+
 
 class MockConfig(object):
     def __init__(self, tmpdir):
@@ -16,6 +18,7 @@ class MockConfig(object):
 class MockEnvironmentConfig(object):
     sitepackages = False
     envdir = None
+    pip_pre = False
 
 
 class MockSession(object):
@@ -51,6 +54,9 @@ class MockVenv(object):
 
 
 class MockAction(object):
+    def __init__(self, venv=None):
+        self.venv = venv
+
     def setactivity(self, *args, **kwargs):
         pass
 
