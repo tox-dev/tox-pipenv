@@ -81,13 +81,13 @@ def tox_testenv_install_deps(venv, action):
     basepath = venv.path.dirpath()
     basepath.ensure(dir=1)
     pipfile_path = _clone_pipfile(venv)
-
     if deps:
+        args = [sys.executable, "-m", "pipenv", "install", "--dev"]
+        if action.venv.envconfig.pip_pre:
+            args.append('--pre')
         with wrap_pipenv_environment(venv, pipfile_path):
             action.setactivity("installdeps", "%s" % ",".join(list(map(str, deps))))
-            args = [sys.executable, "-m", "pipenv", "install", "--dev"] + list(
-                map(str, deps)
-            )
+            args += list(map(str, deps))
             venv._pcall(args, venv=False, action=action, cwd=basepath)
 
     # Return non-None to indicate the plugin has completed
