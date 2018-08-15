@@ -71,8 +71,8 @@ This simple example will test against Python 2.7 and 3.6 using pytest to execute
 
         [testenv]
         deps = 
-        pytest
-        pytest-mock
+            pytest
+            pytest-mock
         commands = python -m pytest test/
 
 
