@@ -129,8 +129,7 @@ def tox_runtest(venv, redirect):
                     cwd=cwd,
                     action=action,
                     redirect=redirect,
-                    ignore_ret=ignore_ret,
-                    testcommand=False,
+                    ignore_ret=ignore_ret
                 )
             except tox.exception.InvocationError as err:
                 if venv.envconfig.ignore_outcome:
