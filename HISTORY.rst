@@ -1,6 +1,11 @@
 Release notes
 =============
 
+1.8.0 (2018-10-30)
+------------------
+
+* Bugfix : Tox-pipenv would skip the installation of Pipfile if the user had not specified any additional deps in tox.ini (#53)
+
 1.7.0 (2018-10-30)
 ------------------
 
