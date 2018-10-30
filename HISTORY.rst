@@ -1,6 +1,13 @@
 Release notes
 =============
 
+1.7.0 (2018-10-30)
+------------------
+
+* Bugfix : Support for Tox 3.0+
+* Bugfix : Fixed API in Tox 3.4.0+
+* Bugfix : Removed pinned version which fixes pipenv issue (#50)
+
 1.6.0 (2018-07-04)
 ------------------
 
