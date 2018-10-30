@@ -106,3 +106,4 @@ ENV/
 env/
 pip-selfcheck.json
 Pipfile
+.vscode/
