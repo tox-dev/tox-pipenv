@@ -15,7 +15,19 @@ def test_install_no_deps(venv, mocker, actioncls):
     mocker.patch("subprocess.Popen")
     result = tox_testenv_install_deps(venv, action)
     assert result == True
-    assert subprocess.Popen.call_count == 0
+    assert subprocess.Popen.call_count == 1
+    subprocess.Popen.assert_called_once_with(
+        [
+            sys.executable,
+            "-m",
+            "pipenv",
+            "install",
+            "--dev",
+        ],
+        action=action,
+        cwd=venv.path.dirpath(),
+        venv=False,
+    )
 
 
 def test_install_special_deps(venv, mocker, actioncls):
