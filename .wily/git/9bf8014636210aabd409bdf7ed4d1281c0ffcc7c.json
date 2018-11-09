@@ -1,0 +1,115 @@
+{
+  "revision": "9bf8014636210aabd409bdf7ed4d1281c0ffcc7c",
+  "author_name": "Anthony Shaw",
+  "author_email": "anthonyshaw@apache.org",
+  "date": 1540872078,
+  "message": "add more tox deps for testing\n",
+  "operators": "maintainability,cyclomatic,raw",
+  "operator_data": {
+    "maintainability": {
+      "tox_pipenv/__init__.py": {
+        "mi": 100.0,
+        "rank": "A"
+      },
+      "tox_pipenv/plugin.py": {
+        "mi": 55.989796440024094,
+        "rank": "A"
+      }
+    },
+    "cyclomatic": {
+      "tox_pipenv/__init__.py": [],
+      "tox_pipenv/plugin.py": [
+        [
+          "tox_runtest",
+          99,
+          0,
+          154,
+          false,
+          null,
+          [],
+          10
+        ],
+        [
+          "_clone_pipfile",
+          21,
+          0,
+          33,
+          false,
+          null,
+          [],
+          4
+        ],
+        [
+          "wrap_pipenv_environment",
+          36,
+          0,
+          50,
+          false,
+          null,
+          [],
+          4
+        ],
+        [
+          "tox_testenv_install_deps",
+          76,
+          0,
+          96,
+          false,
+          null,
+          [],
+          4
+        ],
+        [
+          "tox_testenv_create",
+          53,
+          0,
+          73,
+          false,
+          null,
+          [],
+          3
+        ],
+        [
+          "tox_runenvreport",
+          157,
+          0,
+          171,
+          false,
+          null,
+          [],
+          2
+        ],
+        [
+          "_init_pipenv_environ",
+          8,
+          0,
+          18,
+          false,
+          null,
+          [],
+          1
+        ]
+      ]
+    },
+    "raw": {
+      "tox_pipenv/__init__.py": {
+        "loc": 1,
+        "lloc": 1,
+        "sloc": 1,
+        "comments": 0,
+        "multi": 0,
+        "blank": 0,
+        "single_comments": 0
+      },
+      "tox_pipenv/plugin.py": {
+        "loc": 171,
+        "lloc": 116,
+        "sloc": 128,
+        "comments": 14,
+        "multi": 0,
+        "blank": 31,
+        "single_comments": 12
+      }
+    }
+  }
+}
