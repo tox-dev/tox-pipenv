@@ -112,3 +112,4 @@ Authors
 
 * Anthony Shaw
 * Omer Katz
+* Almog Cohen
