@@ -77,7 +77,11 @@ def tox_testenv_create(venv, action):
 def tox_testenv_install_deps(venv, action):
     _init_pipenv_environ()
     # TODO: If skip_install set, check existence of venv Pipfile
-    deps = venv._getresolvedeps()
+    try:
+        deps = venv._getresolvedeps()
+    except AttributeError:
+        # _getresolvedeps was deprecated on tox 3.7.0 in favor of get_resolved_dependencies
+        deps = venv.get_resolved_dependencies()
     basepath = venv.path.dirpath()
     basepath.ensure(dir=1)
     pipfile_path = _clone_pipfile(venv)

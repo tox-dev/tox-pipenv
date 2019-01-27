@@ -52,6 +52,10 @@ class MockVenv(object):
     def _getresolvedeps(self):
         return self.deps
 
+    def get_resolved_dependencies(self):
+        # _getresolvedeps was deprecated on tox 3.7.0 in favor of get_resolved_dependencies
+        return self.deps
+
 
 class MockAction(object):
     def __init__(self, venv=None):
