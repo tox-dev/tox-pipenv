@@ -2,6 +2,7 @@ import sys
 import os
 import tox
 from tox import hookimpl
+from tox.venv import cleanup_for_venv
 import contextlib
 
 
@@ -61,7 +62,12 @@ def tox_testenv_create(venv, action):
 
     args.extend(["--python", str(config_interpreter)])
 
-    venv.session.make_emptydir(venv.path)
+    try:
+        venv.session.make_emptydir(venv.path)
+    except AttributeError:
+        # tox 3.8.0 removed make_emptydir, See tox #1219
+        cleanup_for_venv(venv)
+
     basepath = venv.path.dirpath()
     basepath.ensure(dir=1)
     pipfile_path = _clone_pipfile(venv)

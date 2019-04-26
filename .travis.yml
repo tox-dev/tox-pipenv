@@ -11,6 +11,7 @@ env:
   - TOX_VERSION="tox>=3.2,<3.3"
   - TOX_VERSION="tox>=3.3,<3.4"
   - TOX_VERSION="tox>=3.4,<3.5"
+  - TOX_VERSION="tox>=3.8,<3.9"
 
 install:
   - pip install ${TOX_VERSION} tox-travis codecov
