@@ -20,7 +20,7 @@ def _init_pipenv_environ():
 
 
 def _clone_pipfile(venv):
-    root_pipfile_path = venv.session.config.toxinidir.join("Pipfile")
+    root_pipfile_path = venv.envconfig.config.toxinidir.join("Pipfile")
     # venv path may not have been created yet
     venv.path.ensure(dir=1)
 
@@ -92,7 +92,7 @@ def tox_testenv_install_deps(venv, action):
     basepath.ensure(dir=1)
     pipfile_path = _clone_pipfile(venv)
     args = [sys.executable, "-m", "pipenv", "install", "--dev"]
-    if action.venv.envconfig.pip_pre:
+    if venv.envconfig.pip_pre:
         args.append('--pre')
     with wrap_pipenv_environment(venv, pipfile_path):
         if deps:
