@@ -63,9 +63,9 @@ def tox_testenv_create(venv, action):
 
     args.extend(["--python", str(config_interpreter)])
 
-    try:
+    if hasattr(venv.envconfig, 'make_emptydir'):
         venv.envconfig.make_emptydir(venv.path)
-    except AttributeError:
+    else:
         # tox 3.8.0 removed make_emptydir, See tox #1219
         cleanup_for_venv(venv)
 
