@@ -36,7 +36,7 @@ class MockVenv(object):
         self.tmpdir = tmpdir
         self.session = MockSession(tmpdir)
         self.envconfig = MockEnvironmentConfig()
-        self.envconfig.config = MockConfig(tmpdir)
+        self.envconfig.config = tmpdir
         self.deps = []
 
     @property
