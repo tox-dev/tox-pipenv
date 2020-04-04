@@ -36,7 +36,7 @@ class MockVenv(object):
         self.tmpdir = tmpdir
         self.session = MockSession(tmpdir)
         self.envconfig = MockEnvironmentConfig()
-        self.envconfig.config = tmpdir
+        self.envconfig.envdir = tmpdir
         self.deps = []
 
     @property
@@ -71,7 +71,8 @@ class MockAction(object):
 
 @pytest.fixture
 def venv(tmpdir):
-    return MockVenv(tmpdir)
+    venv = MockVenv(tmpdir)
+    return  venv
 
 
 @pytest.fixture
