@@ -3,6 +3,7 @@ python:
   - "2.7"
   - "3.5"
   - "3.6"
+  - "3.7"
 
 
 env:
@@ -11,6 +12,7 @@ env:
   - TOX_VERSION="tox>=3.2,<3.3"
   - TOX_VERSION="tox>=3.3,<3.4"
   - TOX_VERSION="tox>=3.4,<3.5"
+  - TOX_VERSION="tox>=3.8,<3.14
 
 install:
   - pip install ${TOX_VERSION} tox-travis codecov
