@@ -1,6 +1,7 @@
 import pytest
 import py
 import subprocess
+import os
 
 from _pytest.tmpdir import tmpdir
 
@@ -12,7 +13,7 @@ class MockConfig(object):
     """
     Fake tox config with static values
     """
-    toxinidir = "~/foo"
+    toxinidir = os.curdir
 
 
 class MockEnvironmentConfig(object):
@@ -35,7 +36,7 @@ class MockVenv(object):
         self.tmpdir = tmpdir
         self.session = MockSession(tmpdir)
         self.envconfig = MockEnvironmentConfig()
-        self.envconfig.envdir = tmpdir
+        self.envconfig.config = MockConfig(tmpdir)
         self.deps = []
 
     @property
