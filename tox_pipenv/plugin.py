@@ -5,7 +5,6 @@ from tox import hookimpl
 from tox import reporter
 from tox.venv import cleanup_for_venv
 import contextlib
-from copy import copy
 
 
 def _init_pipenv_environ():
