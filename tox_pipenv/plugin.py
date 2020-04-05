@@ -2,6 +2,8 @@ import sys
 import os
 import tox
 from tox import hookimpl
+from tox import reporter
+from tox.venv import cleanup_for_venv
 import contextlib
 
 
@@ -24,10 +26,9 @@ def _clone_pipfile(venv):
     venv.path.ensure(dir=1)
 
     venv_pipfile_path = venv.path.join("Pipfile")
-    if not root_pipfile_path.exists():
+    if not os.path.exists(str(root_pipfile_path)):
         with open(str(root_pipfile_path), "a"):
             os.utime(str(root_pipfile_path), None)
-
     if not venv_pipfile_path.check():
         root_pipfile_path.copy(venv_pipfile_path)
     return venv_pipfile_path
@@ -61,7 +62,12 @@ def tox_testenv_create(venv, action):
 
     args.extend(["--python", str(config_interpreter)])
 
-    venv.session.make_emptydir(venv.path)
+    if hasattr(venv.envconfig, 'make_emptydir'):
+        venv.envconfig.make_emptydir(venv.path)
+    else:
+        # tox 3.8.0 removed make_emptydir, See tox #1219
+        cleanup_for_venv(venv)
+
     basepath = venv.path.dirpath()
     basepath.ensure(dir=1)
     pipfile_path = _clone_pipfile(venv)
@@ -86,7 +92,7 @@ def tox_testenv_install_deps(venv, action):
     basepath.ensure(dir=1)
     pipfile_path = _clone_pipfile(venv)
     args = [sys.executable, "-m", "pipenv", "install", "--dev"]
-    if action.venv.envconfig.pip_pre:
+    if venv.envconfig.pip_pre:
         args.append('--pre')
     with wrap_pipenv_environment(venv, pipfile_path):
         if deps:
@@ -105,7 +111,7 @@ def tox_runtest(venv, redirect):
     _init_pipenv_environ()
     pipfile_path = _clone_pipfile(venv)
 
-    action = venv.session.newaction(venv, "runtests")
+    action = venv.new_action("runtests")
 
     with wrap_pipenv_environment(venv, pipfile_path):
         action.setactivity(
@@ -139,20 +145,20 @@ def tox_runtest(venv, redirect):
                 )
             except tox.exception.InvocationError as err:
                 if venv.envconfig.ignore_outcome:
-                    venv.session.report.warning(
+                    reporter.warning(
                         "command failed but result from testenv is ignored\n"
                         "  cmd: %s" % (str(err),)
                     )
                     venv.status = "ignored failed command"
                     continue  # keep processing commands
 
-                venv.session.report.error(str(err))
+                reporter.error(str(err))
                 venv.status = "commands failed"
                 if not venv.envconfig.ignore_errors:
                     break  # Don't process remaining commands
             except KeyboardInterrupt:
                 venv.status = "keyboardinterrupt"
-                venv.session.report.error(venv.status)
+                reporter.error(venv.status)
                 raise
 
     return True
