@@ -1,4 +1,10 @@
+import os
+import sys
+
 from setuptools import setup
+
+# we'll import stuff from the source tree, let's ensure is on the sys path
+sys.path.insert(0, os.path.dirname(os.path.realpath(__file__)))
 
 import tox_pipenv
 
@@ -22,6 +28,7 @@ def main():
         name='tox-pipenv',
         description='A pipenv plugin for tox',
         long_description=long_description + '\n\n' + history_txt,
+        long_description_content_type='text/x-rst',
         version=_version,
         url='https://github.com/tox-dev/tox-pipenv',
         license='MIT',

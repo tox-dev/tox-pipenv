@@ -93,7 +93,7 @@ Yes, although if you are migrating from a requirements.txt to a Pipfile, you can
 Is `Pipfile.lock` expected to be under source control?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-According to `pipenv` documenation, `Pipfile.lock` is not recommended under source control if it is going to be used under multiple Python versions.
+According to `pipenv` documentation, `Pipfile.lock` is not recommended under source control if it is going to be used under multiple Python versions.
 
 What is the role of `requirements.txt` file?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -112,3 +112,4 @@ Authors
 
 * Anthony Shaw
 * Omer Katz
+* Almog Cohen
