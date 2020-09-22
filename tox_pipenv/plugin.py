@@ -21,7 +21,11 @@ def _init_pipenv_environ():
 
 
 def _clone_pipfile(venv):
-    root_pipfile_path = venv.session.config.toxinidir.join("Pipfile")
+    if hasattr(venv, 'session'):
+        root_pipfile_path = venv.session.config.toxinidir.join("Pipfile")
+    else:
+        root_pipfile_path = venv.envconfig.config.toxinidir.join("Pipfile")
+
     # venv path may not have been created yet
     venv.path.ensure(dir=1)
 
