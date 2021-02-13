@@ -114,7 +114,9 @@ def tox_testenv_install_deps(venv, action):
     args = [sys.executable, "-m", "pipenv", "install", "--dev"]
     if venv.envconfig.pip_pre:
         args.append('--pre')
-
+    # Use Pipfile.lock instead of Pipfile
+    if venv.envconfig.ignore_pipfile:
+        args.append("--ignore-pipfile")
     with wrap_pipenv_environment(venv, pipfile_path):
         if deps:
             action.setactivity("installdeps", "%s" % ",".join(list(map(str, deps))))

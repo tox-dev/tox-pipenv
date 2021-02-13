@@ -1,4 +1,3 @@
-import pytest
 from tox_pipenv.plugin import tox_testenv_install_deps
 import subprocess
 import os
@@ -58,7 +57,6 @@ def test_install_special_deps(venv, mocker, actioncls):
     )
 
 
-
 def test_install_pip_pre_deps(venv, mocker, actioncls):
     """
     Test that nothing is called when there are no deps
@@ -82,6 +80,33 @@ def test_install_pip_pre_deps(venv, mocker, actioncls):
             "--pre",
             "foo-package",
             "foo-two-package",
+        ],
+        action=action,
+        cwd=venv.path.dirpath(),
+        venv=False,
+    )
+
+
+def test_install_pip_ignore_pipfile(venv, mocker, actioncls):
+    """
+    Test that --ignore-pipfile flag is passed to pipenv executable
+    """
+    action = actioncls(venv)
+
+    mocker.patch.object(os, "environ", autospec=True)
+    mocker.patch.object(action.venv.envconfig, 'ignore_pipfile', True)
+    mocker.patch("subprocess.Popen")
+    result = tox_testenv_install_deps(venv, action)
+    assert result == True
+    assert subprocess.Popen.call_count == 1
+    subprocess.Popen.assert_called_once_with(
+        [
+            sys.executable,
+            "-m",
+            "pipenv",
+            "install",
+            "--dev",
+            "--ignore-pipfile",
         ],
         action=action,
         cwd=venv.path.dirpath(),
