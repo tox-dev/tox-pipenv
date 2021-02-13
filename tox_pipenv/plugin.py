@@ -21,10 +21,15 @@ def _init_pipenv_environ():
 
 
 def _clone_pipfile(venv):
+    """
+    Copy Pipfile and Pipfile.lock into virtual environment
+    """
     if hasattr(venv, 'session'):
         root_pipfile_path = venv.session.config.toxinidir.join("Pipfile")
+        root_pipfile_lock_path = venv.session.config.toxinidir.join("Pipfile.lock")
     else:
         root_pipfile_path = venv.envconfig.config.toxinidir.join("Pipfile")
+        root_pipfile_lock_path = venv.envconfig.config.toxinidir.join("Pipfile.lock")
 
     # venv path may not have been created yet
     venv.path.ensure(dir=1)
@@ -35,6 +40,13 @@ def _clone_pipfile(venv):
             os.utime(str(root_pipfile_path), None)
     if not venv_pipfile_path.check():
         root_pipfile_path.copy(venv_pipfile_path)
+
+    # In case we want to use Pipfile.lock instead of Pipfile
+    if venv.envconfig.ignore_pipfile:
+        venv_pipfile_lock_path = venv.path.join("Pipfile.lock")
+        if not venv_pipfile_lock_path.check():
+            root_pipfile_lock_path.copy(venv_pipfile_lock_path)
+
     return venv_pipfile_path
 
 
@@ -46,6 +58,8 @@ def wrap_pipenv_environment(venv, pipfile_path):
     os.environ["PIPENV_VIRTUALENV"] = os.path.join(str(venv.path))
     old_venv = os.environ.get("VIRTUAL_ENV", None)
     os.environ["VIRTUAL_ENV"] = os.path.join(str(venv.path))
+    old_ignore_pipfile = os.environ.get("PIPENV_IGNORE_PIPFILE", None)
+    os.environ["PIPENV_IGNORE_PIPFILE"] = "1" if venv.envconfig.ignore_pipfile else "0"
     yield
     if old_pipfile:
         os.environ["PIPENV_PIPFILE"] = old_pipfile
@@ -53,6 +67,8 @@ def wrap_pipenv_environment(venv, pipfile_path):
         os.environ["PIPENV_VIRTUALENV"] = old_pipvenv
     if old_venv:
         os.environ["VIRTUAL_ENV"] = old_venv
+    if old_ignore_pipfile:
+        os.environ["PIPENV_IGNORE_PIPFILE"] = old_ignore_pipfile
 
 
 @hookimpl
@@ -98,12 +114,14 @@ def tox_testenv_install_deps(venv, action):
     args = [sys.executable, "-m", "pipenv", "install", "--dev"]
     if venv.envconfig.pip_pre:
         args.append('--pre')
+
     with wrap_pipenv_environment(venv, pipfile_path):
         if deps:
             action.setactivity("installdeps", "%s" % ",".join(list(map(str, deps))))
             args += list(map(str, deps))
         else:
             action.setactivity("installdeps", "[]")
+
         venv._pcall(args, venv=False, action=action, cwd=basepath)
 
     # Return non-None to indicate the plugin has completed
@@ -183,3 +201,19 @@ def tox_runenvreport(venv, action):
 
         output = output.split("\n")
     return output
+
+
+@hookimpl
+def tox_addoption(parser):
+    help_text = "Ignore Pipfile when installing, using the Pipfile.lock"
+
+    parser.add_argument(
+        "--ignore-pipfile",
+        action="store_true",
+    )
+    parser.add_testenv_attribute(
+        name="ignore_pipfile",
+        type="bool",
+        default=False,
+        help=help_text,
+    )
