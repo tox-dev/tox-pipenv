@@ -20,6 +20,7 @@ class MockEnvironmentConfig(object):
     sitepackages = False
     envdir = None
     pip_pre = False
+    ignore_pipfile = False
 
 
 class MockSession(object):

@@ -87,6 +87,11 @@ Is `Pipfile.lock` expected to be under source control?
 
 According to `pipenv` documentation, `Pipfile.lock` is not recommended under source control if it is going to be used under multiple Python versions.
 
+What if I still want to use dependencies from `Pipfile.lock`?
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+You can add `ignore_pipfile = True` to tox.ini or run tox with `--ignore-pipfile` flag.
+
 What is the role of `requirements.txt` file?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
