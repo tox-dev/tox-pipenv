@@ -41,8 +41,7 @@ def _clone_pipfile(venv):
     if not venv_pipfile_path.check():
         root_pipfile_path.copy(venv_pipfile_path)
 
-    # In case we want to use Pipfile.lock instead of Pipfile
-    if venv.envconfig.ignore_pipfile:
+    if _ignore_pipfile(venv):
         venv_pipfile_lock_path = venv.path.join("Pipfile.lock")
         if not venv_pipfile_lock_path.check():
             root_pipfile_lock_path.copy(venv_pipfile_lock_path)
@@ -58,17 +57,15 @@ def wrap_pipenv_environment(venv, pipfile_path):
     os.environ["PIPENV_VIRTUALENV"] = os.path.join(str(venv.path))
     old_venv = os.environ.get("VIRTUAL_ENV", None)
     os.environ["VIRTUAL_ENV"] = os.path.join(str(venv.path))
-    old_ignore_pipfile = os.environ.get("PIPENV_IGNORE_PIPFILE", None)
-    os.environ["PIPENV_IGNORE_PIPFILE"] = "1" if venv.envconfig.ignore_pipfile else "0"
+
     yield
+
     if old_pipfile:
         os.environ["PIPENV_PIPFILE"] = old_pipfile
     if old_pipvenv:
         os.environ["PIPENV_VIRTUALENV"] = old_pipvenv
     if old_venv:
         os.environ["VIRTUAL_ENV"] = old_venv
-    if old_ignore_pipfile:
-        os.environ["PIPENV_IGNORE_PIPFILE"] = old_ignore_pipfile
 
 
 @hookimpl
@@ -114,8 +111,9 @@ def tox_testenv_install_deps(venv, action):
     args = [sys.executable, "-m", "pipenv", "install", "--dev"]
     if venv.envconfig.pip_pre:
         args.append('--pre')
+
     # Use Pipfile.lock instead of Pipfile
-    if venv.envconfig.ignore_pipfile:
+    if _ignore_pipfile(venv):
         args.append("--ignore-pipfile")
     with wrap_pipenv_environment(venv, pipfile_path):
         if deps:
@@ -219,3 +217,12 @@ def tox_addoption(parser):
         default=False,
         help=help_text,
     )
+
+
+def _ignore_pipfile(venv):
+    """ In case we want to use Pipfile.lock instead of Pipfile """
+    if venv.envconfig.ignore_pipfile is True:
+        return True
+    if venv.envconfig.config.option.ignore_pipfile is True:
+        return True
+    return False
