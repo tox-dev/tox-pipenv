@@ -107,6 +107,7 @@ def test_install_pip_ignore_pipfile(venv, mocker, actioncls):
             "install",
             "--dev",
             "--ignore-pipfile",
+            "--keep-outdated",
         ],
         action=action,
         cwd=venv.path.dirpath(),

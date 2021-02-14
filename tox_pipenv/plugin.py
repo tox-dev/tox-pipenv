@@ -115,6 +115,8 @@ def tox_testenv_install_deps(venv, action):
     # Use Pipfile.lock instead of Pipfile
     if _ignore_pipfile(venv):
         args.append("--ignore-pipfile")
+        args.append('--keep-outdated')  # so additional dependencies don't run locking process
+
     with wrap_pipenv_environment(venv, pipfile_path):
         if deps:
             action.setactivity("installdeps", "%s" % ",".join(list(map(str, deps))))
