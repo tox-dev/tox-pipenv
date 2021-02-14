@@ -221,8 +221,14 @@ def tox_addoption(parser):
 
 def _ignore_pipfile(venv):
     """ In case we want to use Pipfile.lock instead of Pipfile """
+    # Get the flag from tox.ini
     if venv.envconfig.ignore_pipfile is True:
         return True
-    if venv.envconfig.config.option.ignore_pipfile is True:
-        return True
+    # Get the flag from command line options
+    try:
+        if venv.envconfig.config.option.ignore_pipfile is True:
+            return True
+    except AttributeError:
+        pass
+
     return False
