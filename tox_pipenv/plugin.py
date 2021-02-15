@@ -43,7 +43,7 @@ def _clone_pipfile(venv):
 
     if _ignore_pipfile(venv):
         venv_pipfile_lock_path = venv.path.join("Pipfile.lock")
-        if not venv_pipfile_lock_path.check():
+        if root_pipfile_lock_path.exists() and not venv_pipfile_lock_path.check():
             root_pipfile_lock_path.copy(venv_pipfile_lock_path)
 
     return venv_pipfile_path
@@ -114,6 +114,7 @@ def tox_testenv_install_deps(venv, action):
 
     # Use Pipfile.lock instead of Pipfile
     if _ignore_pipfile(venv):
+        action.setactivity("pipenv", "using Pipfile.lock")
         args.append("--ignore-pipfile")
         args.append('--keep-outdated')  # so additional dependencies don't run locking process
 
